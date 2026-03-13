@@ -4,23 +4,23 @@
 #include <stdio.h>
 
 typedef struct {
-  char *name;
-  int src_idx, dest_idx;
-  double weight;
+    char *name;
+    int src_idx, dest_idx;
+    double weight;
 } edge_t;
 
 typedef struct {
-  int id;
-  double x, y;
+    int id;
+    double x, y;
 } vertex_t;
 
 typedef struct {
-  vertex_t *vertices;
-  edge_t *edges;
-  int edge_idx;
-  int vertex_idx;
-  int edge_capacity;
-  int vertex_capacity;
+    vertex_t *vertices;
+    edge_t *edges;
+    int edge_idx;
+    int vertex_idx;
+    int edge_capacity;
+    int vertex_capacity;
 } graph_t;
 
 graph_t *init_graph();
