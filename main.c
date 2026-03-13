@@ -1,6 +1,7 @@
 #include "graph.h"
 #include <getopt.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 void help() {}
 
@@ -42,16 +43,24 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  printf("verbose %d\n", verbose);
-  printf("format %s\n", format);
-  printf("input %s\n", input);
-  printf("output %s\n", output);
-  printf("algmorith %s\n", algorithm);
+  if (verbose){
+    printf("> Tryb verbose wlaczony\n");
+    printf("> Plik wejsciowy:   %s\n", input);
+    printf("> Algmorytm:        %s\n", algorithm);
+    printf("> Format wyjściowy: %s\n", format);
+    printf("> Plik wyjsciowy:   %s\n", output);
+  }
+
+  FILE *input_file = fopen(input, "r");
+  if (!input_file) {
+      fprintf(stderr, "Blad: nie mozna otworzyc pliku '%s'\n", input);
+      return EXIT_FAILURE;
+  }
 
   graph_t *graph = init_graph();
   load_graph(graph, input);
   print_graph(graph, output);
   free_graph(graph);
 
-  return 0;
+  return EXIT_SUCCESS;
 }
