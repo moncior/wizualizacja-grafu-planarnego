@@ -1,2 +1,2 @@
 all:
-	cc *.c
+	cc src/*.c src/algorithms/*.c
