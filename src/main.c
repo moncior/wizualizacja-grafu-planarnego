@@ -1,14 +1,17 @@
-#include "../include/graph.h"
 #include "../include/algorithms.h"
+#include "../include/graph.h"
 #include "../include/output_handler.h"
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 void help() {}
 
 int main(int argc, char **argv) {
+    srand(time(NULL));
+
     int opt;
     char *input = NULL;
     char *output = NULL;
@@ -57,11 +60,11 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Blad: '%s' nie jest obslugiwanym algorytmem\n", algorithm);
         return EXIT_FAILURE;
     }
-    
+
     if (output) {
         printf("Info: Zapisuje graf do pliku '%s'\n", output);
         output_file = fopen(output, "w");
-        if (!output_file){
+        if (!output_file) {
             fprintf(stderr, "Blad: Nie mozna otworzyc pliku wyjściowego");
             return EXIT_FAILURE;
         }

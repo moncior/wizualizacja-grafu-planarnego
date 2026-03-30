@@ -50,8 +50,10 @@ int get_vertex_idx(graph_t *graph, int id) {
 
     if (graph->vertex_idx >= graph->vertex_capacity) {
         graph->vertex_capacity *= 2;
-        graph->vertices =
+        vertex_t *tmp =
             realloc(graph->vertices, sizeof(vertex_t) * graph->vertex_capacity);
+        if (!tmp) return -1;
+        graph->vertices = tmp;
     }
 
     int new_idx = graph->vertex_idx;
