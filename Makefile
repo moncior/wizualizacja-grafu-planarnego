@@ -5,6 +5,7 @@ LDFLAGS = -lm
 SRC_DIR = src
 OBJ_DIR = obj
 BIN = program
+TEST_OUT = meow
 
 SRCS = $(shell find $(SRC_DIR) -name "*.c")
 OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
@@ -19,10 +20,13 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(OBJ_DIR) $(BIN)
+	rm -rf $(OBJ_DIR) $(BIN) $(TEST_OUT)
 
-test_tutte: all
-	./$(BIN) tests/example_graph -va tutte -o graph_1.out
-	python3 visualize.py tests/example_graph graph_1.out
+alg ?= fruch_rein
+idx ?= 1
+
+test: all
+	./$(BIN) tests/graph_$(idx).in -va $(alg) -o $(TEST_OUT)
+	python3 scripts/visualize.py tests/graph_$(idx).in $(TEST_OUT)
 
 .PHONY: all clean test
