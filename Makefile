@@ -32,6 +32,7 @@ test: all
 	mv graph.png tests/images/graph_$(idx)_$(alg).png
 
 test_all:
+	mkdir -p tests/images tests/output
 	for alg in fruch_rein eades; do \
 		for idx in 1 2 3 4 5 6 7 8; do \
 			$(MAKE) test alg=$$alg idx=$$idx; \
