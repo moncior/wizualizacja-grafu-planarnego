@@ -4,6 +4,6 @@
 #include "graph.h"
 
 void fruch_rein(graph_t *graph, int verbose);
-void tutte(graph_t *graph, int verbose);
+void eades(graph_t *graph, int verbose);
 
 #endif

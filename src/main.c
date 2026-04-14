@@ -54,8 +54,8 @@ int main(int argc, char **argv) {
     }
     if (!strcmp(algorithm, "fruch_rein")) {
         fruch_rein(graph, verbose);
-    } else if (!strcmp(algorithm, "tutte")) {
-        tutte(graph, verbose);
+    } else if (!strcmp(algorithm, "eades")) {
+        eades(graph, verbose);
     } else {
         fprintf(stderr, "Blad: '%s' nie jest obslugiwanym algorytmem\n", algorithm);
         return EXIT_FAILURE;

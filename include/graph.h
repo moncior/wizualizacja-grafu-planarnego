@@ -10,8 +10,9 @@ typedef struct {
 } edge_t;
 
 typedef struct {
-    int id;
     double x, y;
+    double dx, dy;
+    int id;
 } vertex_t;
 
 typedef struct {

@@ -60,6 +60,8 @@ int get_vertex_idx(graph_t *graph, int id) {
     graph->vertices[new_idx].id = id;
     graph->vertices[new_idx].x = (double)(rand() % 100);
     graph->vertices[new_idx].y = (double)(rand() % 100);
+    graph->vertices[new_idx].dx = 0;
+    graph->vertices[new_idx].dy = 0;
 
     graph->vertex_idx++;
 
