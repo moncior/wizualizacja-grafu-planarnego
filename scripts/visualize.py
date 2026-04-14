@@ -26,10 +26,11 @@ try:
                 G.add_edge(u, v, weight=name)
     
     nx.draw(G, pos, with_labels=True, node_color='lightblue', node_size=800, font_weight='bold')
-    nx.draw_networkx_edge_labels(G, pos, edge_labels=nx.get_edge_attributes(G, 'weight'))
+    # nx.draw_networkx_edge_labels(G, pos, edge_labels=nx.get_edge_attributes(G, 'weight'))
 
     plt.axis('off')
-    plt.show()
+    plt.savefig('graph.png')
+    print("Graph saved to graph.png")
 
 except Exception as e:
     print(f"Error: {e}")

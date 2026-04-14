@@ -26,7 +26,16 @@ alg ?= fruch_rein
 idx ?= 1
 
 test: all
-	./$(BIN) tests/graph_$(idx).in -va $(alg) -o $(TEST_OUT)
-	python3 scripts/visualize.py tests/graph_$(idx).in $(TEST_OUT)
+	./$(BIN) tests/input/graph_$(idx).in -va $(alg) -o $(TEST_OUT)
+	python3 scripts/visualize.py tests/input/graph_$(idx).in $(TEST_OUT)
+	mv $(TEST_OUT) tests/output/graph_$(idx)_$(alg).txt
+	mv graph.png tests/images/graph_$(idx)_$(alg).png
 
-.PHONY: all clean test
+test_all:
+	for alg in fruch_rein eades; do \
+		for idx in 1 2 3 4 5 6 7 8; do \
+			$(MAKE) test alg=$$alg idx=$$idx; \
+		done; \
+	done
+
+.PHONY: all clean test test_all
