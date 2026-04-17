@@ -28,10 +28,6 @@ void fruch_rein(graph_t *graph, int verbose) {
         forces[i][0] = 0.0;
         forces[i][1] = 0.0;
     }
-
-    if (verbose)
-        printf("Info: Rozpoczynam glowna petle algorytmu fruchterman-reingold\n");
-
     int loops = 100;
 
     for (int iteration = 0; iteration < loops; iteration++) {

@@ -89,10 +89,25 @@ void load_graph(graph_t *graph, FILE *f) {
         edge->name = strdup(edge_name);
         edge->src_idx = src_idx;
         edge->dest_idx = dest_idx;
+        graph->vertices[src_idx].degree++;
+        graph->vertices[dest_idx].degree++;
         edge->weight = weight;
 
         graph->edge_idx++;
     }
 
+    for (int i = 0; i < graph->vertex_idx; i++) {
+        graph->vertices[i].neighbors = malloc(graph->vertices[i].degree * sizeof(int));
+        graph->vertices[i].degree = 0;
+    }
+
+    for (int i = 0; i < graph->edge_idx; i++) {
+        int src_idx = graph->edges[i].src_idx;
+        int dest_idx = graph->edges[i].dest_idx;
+
+        graph->vertices[src_idx].neighbors[graph->vertices[src_idx].degree++] = dest_idx;
+        graph->vertices[dest_idx].neighbors[graph->vertices[dest_idx].degree++] = src_idx;
+    }
+    
     fclose(f);
 }

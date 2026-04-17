@@ -44,7 +44,7 @@ void eades(graph_t *graph, int verbose) {
             double dy = graph->vertices[u].y - graph->vertices[v].y;
             double dist = sqrt(dx * dx + dy * dy) + EPS;
 
-            double force = - ATTR * log(dist / graph->edges[i].weight);
+            double force = -ATTR * log(dist / graph->edges[i].weight);
             graph->vertices[u].dx += (dx / dist) * force;
             graph->vertices[u].dy += (dy / dist) * force;
             graph->vertices[v].dx -= (dx / dist) * force;
