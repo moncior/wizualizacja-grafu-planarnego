@@ -43,6 +43,7 @@ int main(int argc, char **argv) {
     }
     graph_t *graph = init_graph();
     load_graph(graph, input_file);
+    fclose(input_file);
 
     if (algorithm == NULL) {
         fprintf(stderr, "Blad 3: Nie podano nazwy algorytmu\n");
@@ -63,7 +64,8 @@ int main(int argc, char **argv) {
         printf("Info: Zapisuje graf do pliku '%s'\n", output);
         output_file = fopen(output, !strcmp(format, "txt") ? "w" : "wb");
         if (!output_file) {
-            fprintf(stderr, "Blad 5: Nie mozna otworzyc pliku wyjściowego");
+            fprintf(stderr, "Blad: Nie mozna otworzyc pliku wyjściowego");
+            free_graph(graph);
             return EXIT_FAILURE;
         }
     } else {
@@ -71,6 +73,7 @@ int main(int argc, char **argv) {
     }
     // print_graph(graph, output_file);
     write_output(output_file, graph, format);
+    if (output) fclose(output_file);
     free_graph(graph);
 
     return EXIT_SUCCESS;

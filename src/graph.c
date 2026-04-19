@@ -52,7 +52,7 @@ int get_vertex_idx(graph_t *graph, int id) {
         graph->vertex_capacity *= 2;
         vertex_t *tmp =
             realloc(graph->vertices, sizeof(vertex_t) * graph->vertex_capacity);
-        if (!tmp) return -1;
+        if (!tmp) { free(graph->vertices); return -1; }
         graph->vertices = tmp;
     }
 
@@ -73,7 +73,7 @@ void load_graph(graph_t *graph, FILE *f) {
     int src, dest;
     double weight;
 
-    while (fscanf(f, "%s %d %d %lf", edge_name, &src, &dest, &weight) == 4) {
+    while (fscanf(f, "%63s %d %d %lf", edge_name, &src, &dest, &weight) == 4) {
         int src_idx = get_vertex_idx(graph, src);
         int dest_idx = get_vertex_idx(graph, dest);
 
@@ -81,12 +81,13 @@ void load_graph(graph_t *graph, FILE *f) {
             graph->edge_capacity *= 2;
             edge_t *tmp =
                 realloc(graph->edges, sizeof(edge_t) * graph->edge_capacity);
-            if (!tmp) return;
+            if (!tmp) { free(graph->edges); return; }
             graph->edges = tmp;
         }
 
         edge_t *edge = &graph->edges[graph->edge_idx];
         edge->name = strdup(edge_name);
+        if (!edge->name) return;
         edge->src_idx = src_idx;
         edge->dest_idx = dest_idx;
         graph->vertices[src_idx].degree++;

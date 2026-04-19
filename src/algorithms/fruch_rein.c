@@ -14,7 +14,7 @@ void fruch_rein(graph_t *graph, int verbose) {
 
     for (int i = 0; i < n; i++) {
         graph->vertices[i].x = (double)(rand() % width);
-        graph->vertices[i].y = (double)(rand() % width);
+        graph->vertices[i].y = (double)(rand() % height);
     }
 
     double C = 1.5;
@@ -22,9 +22,11 @@ void fruch_rein(graph_t *graph, int verbose) {
     double k = C * sqrt((double)(width * height) / (n + 1));
 
     double **forces = malloc(n * sizeof(double *));
+    if (!forces) return;
 
     for (int i = 0; i < n; i++) {
         forces[i] = malloc(2 * sizeof(double));
+        if (!forces[i]) { for (int j = 0; j < i; j++) free(forces[j]); free(forces); return; }
         forces[i][0] = 0.0;
         forces[i][1] = 0.0;
     }
