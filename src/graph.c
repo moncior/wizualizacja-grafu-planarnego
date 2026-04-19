@@ -24,6 +24,10 @@ void free_graph(graph_t *graph) {
         free(graph->edges[i].name);
     }
 
+    for (int i = 0; i < graph->vertex_idx; i++) {
+        free(graph->vertices[i].neighbors);
+    }
+
     free(graph->edges);
     free(graph->vertices);
     free(graph);
@@ -62,6 +66,7 @@ int get_vertex_idx(graph_t *graph, int id) {
     graph->vertices[new_idx].y = (double)(rand() % 100);
     graph->vertices[new_idx].dx = 0;
     graph->vertices[new_idx].dy = 0;
+    graph->vertices[new_idx].degree = 0;
 
     graph->vertex_idx++;
 
@@ -109,6 +114,4 @@ void load_graph(graph_t *graph, FILE *f) {
         graph->vertices[src_idx].neighbors[graph->vertices[src_idx].degree++] = dest_idx;
         graph->vertices[dest_idx].neighbors[graph->vertices[dest_idx].degree++] = src_idx;
     }
-    
-    fclose(f);
 }
