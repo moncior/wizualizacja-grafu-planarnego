@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
     char *format = "txt";
     char *algorithm = NULL;
     int verbose = 0;
-
+    
     while ((opt = getopt(argc, argv, "vhf:o:a:")) != -1) {
         switch (opt) {
         case 'v': verbose = 1; break;
@@ -56,6 +56,8 @@ int main(int argc, char **argv) {
         fruch_rein(graph, verbose);
     } else if (!strcmp(algorithm, "eades")) {
         eades(graph, verbose);
+    } else if (!strcmp(algorithm, "tutte")) {
+        tutte(graph, verbose);
     } else {
         fprintf(stderr, "Blad: '%s' nie jest obslugiwanym algorytmem\n", algorithm);
         return EXIT_FAILURE;
@@ -63,7 +65,7 @@ int main(int argc, char **argv) {
 
     if (output) {
         printf("Info: Zapisuje graf do pliku '%s'\n", output);
-        output_file = fopen(output, "w");
+        output_file = fopen(output, !strcmp(format, "txt") ? "w" : "wb");
         if (!output_file) {
             fprintf(stderr, "Blad: Nie mozna otworzyc pliku wyjściowego");
             return EXIT_FAILURE;
@@ -72,7 +74,7 @@ int main(int argc, char **argv) {
         printf("Info: Wypisuje graf na standardowe wyjscie\n");
     }
     // print_graph(graph, output_file);
-    write_output(output_file, graph, format, verbose);
+    write_output(output_file, graph, format);
     free_graph(graph);
 
     return EXIT_SUCCESS;

@@ -13,6 +13,8 @@ typedef struct {
     double x, y;
     double dx, dy;
     int id;
+    int degree;
+    int *neighbors;
 } vertex_t;
 
 typedef struct {
