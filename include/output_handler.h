@@ -3,6 +3,6 @@
 
 #include "graph.h"
 
-void write_output(FILE *f, graph_t *graph, char *format, int verbose);
+void write_output(FILE *f, graph_t *graph, char *format);
 
 #endif

@@ -26,13 +26,14 @@ clean:
 alg ?= fruch_rein
 idx ?= 1
 show_plot ?= 1
+format ?= txt
 
 test: all
 	mkdir -p tests/images tests/output
-	./$(BIN) -va $(alg) -o $(TEST_OUT) tests/input/graph_$(idx).in 
-	python3 scripts/visualize.py tests/input/graph_$(idx).in $(TEST_OUT) $(show_plot)
+	./$(BIN) -va $(alg) -o $(TEST_OUT) -f $(format) tests/input/graph_$(idx).in 
+	python3 scripts/visualize.py tests/input/graph_$(idx).in $(TEST_OUT) $(show_plot) $(format)
 	mv graph.png tests/images/graph_$(idx)_$(alg).png; \
-	mv $(TEST_OUT) tests/output/graph_$(idx)_$(alg).txt
+	mv $(TEST_OUT) tests/output/graph_$(idx)_$(alg).$(format)
 
 test_all:
 	mkdir -p tests/images tests/output
