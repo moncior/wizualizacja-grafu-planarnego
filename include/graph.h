@@ -31,5 +31,6 @@ void free_graph(graph_t *graph);
 void print_graph(graph_t *graph, FILE *f);
 void load_graph(graph_t *graph, FILE *f);
 int get_vertex_idx(graph_t *graph, int id);
+int is_planar(graph_t *graph);
 
 #endif

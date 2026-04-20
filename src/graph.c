@@ -115,3 +115,11 @@ void load_graph(graph_t *graph, FILE *f) {
         graph->vertices[dest_idx].neighbors[graph->vertices[dest_idx].degree++] = src_idx;
     }
 }
+
+int is_planar(graph_t *graph) {
+    int v = graph->vertex_idx;
+    int e = graph->edge_idx;
+    if (v < 3) return 1;
+    if (e > 3 * (v - 2)) return 0;
+    return 1;
+}

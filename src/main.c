@@ -45,6 +45,12 @@ int main(int argc, char **argv) {
     load_graph(graph, input_file);
     fclose(input_file);
 
+    if (!is_planar(graph)) {
+        fprintf(stderr, "Blad: Graf nie jest planarny\n");
+        free_graph(graph);
+        return EXIT_FAILURE;
+    }
+
     if (algorithm == NULL) {
         fprintf(stderr, "Blad 3: Nie podano nazwy algorytmu\n");
         return EXIT_FAILURE;
