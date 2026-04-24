@@ -46,13 +46,13 @@ int main(int argc, char **argv) {
     fclose(input_file);
 
     if (!is_planar(graph)) {
-        fprintf(stderr, "Blad: Graf nie jest planarny\n");
+        fprintf(stderr, "Blad 3: Graf nie jest planarny\n");
         free_graph(graph);
         return EXIT_FAILURE;
     }
 
     if (algorithm == NULL) {
-        fprintf(stderr, "Blad 3: Nie podano nazwy algorytmu\n");
+        fprintf(stderr, "Blad 4: Nie podano nazwy algorytmu\n");
         return EXIT_FAILURE;
     }
     if (!strcmp(algorithm, "fruch_rein")) {
@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
     } else if (!strcmp(algorithm, "tutte")) {
         tutte(graph, verbose);
     } else {
-        fprintf(stderr, "Blad 4: '%s' nie jest obslugiwanym algorytmem\n", algorithm);
+        fprintf(stderr, "Blad 5: '%s' nie jest obslugiwanym algorytmem\n", algorithm);
         return EXIT_FAILURE;
     }
 
@@ -70,7 +70,7 @@ int main(int argc, char **argv) {
         printf("Info: Zapisuje graf do pliku '%s'\n", output);
         output_file = fopen(output, !strcmp(format, "txt") ? "w" : "wb");
         if (!output_file) {
-            fprintf(stderr, "Blad: Nie mozna otworzyc pliku wyjściowego");
+            fprintf(stderr, "Blad 6: Nie mozna otworzyc pliku wyjściowego");
             free_graph(graph);
             return EXIT_FAILURE;
         }
