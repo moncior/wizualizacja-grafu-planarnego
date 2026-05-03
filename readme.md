@@ -122,3 +122,20 @@ Aby usunąć pliki tymczasowe i zbudowane artefakty:
 ```bash
 make clean
 ```
+
+## Interfejs Graficzny (Java Swing)
+
+Aplikacja została rozbudowana o dedykowane GUI (w katalogu `src-java`), które pozwala na interaktywną pracę z wynikami algorytmów.
+
+### Możliwości GUI:
+- **Import danych:** Wczytywanie struktury grafu oraz obliczonych współrzędnych.
+- **Interakcja:** Możliwość ręcznego przesuwania węzłów w celu poprawy czytelności.
+- **Skalowanie:** Dynamiczny zoom widoku za pomocą suwaka.
+- **Reset pozycji:** Szybki powrót do oryginalnego układu wygenerowanego przez silnik obliczeniowy.
+
+### Struktura plików Java:
+- **model** – definicje obiektów: **Node** (węzeł), **Edge** (krawędź) oraz **Graph** (struktura danych).
+- **io** – obsługa wczytywania i przetwarzania plików (tekstowych oraz binarnych).
+- **view** – kod odpowiedzialny za okna, przyciski oraz rysowanie grafu.
+
+
