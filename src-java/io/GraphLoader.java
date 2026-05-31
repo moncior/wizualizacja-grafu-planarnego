@@ -3,12 +3,11 @@ package io;
 import model.Graph;
 import model.Edge;
 import model.Node;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.PrintWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.io.EOFException;
+import java.io.BufferedInputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 public class GraphLoader {
 
@@ -49,6 +48,21 @@ public class GraphLoader {
 
                     graph.updateNodePos(id, x, y);
                 }
+            }
+        }
+    }
+
+    public void loadCoordinatesBinary(String path, Graph graph) throws IOException {
+        try (FileInputStream fis = new FileInputStream(path)) {
+            byte[] buffer = new byte[20];
+            int bytesRead;
+            while ((bytesRead = fis.read(buffer)) == 20) {
+                ByteBuffer bb = ByteBuffer.wrap(buffer);
+                bb.order(ByteOrder.LITTLE_ENDIAN);
+                int id   = bb.getInt();
+                double x = bb.getDouble();
+                double y = bb.getDouble();
+                graph.updateNodePos(id, x, y);
             }
         }
     }
