@@ -12,6 +12,7 @@ public class Main extends JFrame {
     private GraphPanel graphPanel;
     private Graph graph;
     private GraphLoader graphLoader;
+    private JSlider zoomSlider;
 
     public Main() {
         setTitle("Wizualizacja Grafów - JIMP2");
@@ -37,8 +38,8 @@ public class Main extends JFrame {
 
         JMenuItem loadEdgesItem = new JMenuItem("1. Wczytaj strukturę (data.txt)");
         JMenuItem loadCoordsItem = new JMenuItem("2a. Wczytaj pozycje (results.txt)");
-        // TUTAJ DODAJEMY NOWY ELEMENT MENU DLA TWOJEJ METODY BINARNEJ
         JMenuItem loadCoordsBinItem = new JMenuItem("2b. Wczytaj pozycje binarne (results.bin)");
+        JMenuItem clearGraphItem = new JMenuItem("Wyczyść graf (Nowy)");
         JMenuItem saveImageItem = new JMenuItem("3. Eksportuj jako obraz (PNG)");
         JMenuItem exitItem = new JMenuItem("Wyjście");
 
@@ -81,12 +82,24 @@ public class Main extends JFrame {
             }
         });
 
+        // Opcja czyszczenia grafu w Menu
+        clearGraphItem.addActionListener(e -> {
+            graph = new Graph();
+            graphPanel.setGraph(graph);
+            if (zoomSlider != null) zoomSlider.setValue(150);
+            graphPanel.repaint();
+        });
+
         saveImageItem.addActionListener(e -> {
             JFileChooser fc = new JFileChooser(".");
             fc.setSelectedFile(new File("graf.png"));
             if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
                 try {
-                    graphPanel.saveToPNG(fc.getSelectedFile().getAbsolutePath());
+                    File file = fc.getSelectedFile();
+                    if (!file.getName().toLowerCase().endsWith(".png")) {
+                        file = new File(file.getAbsolutePath() + ".png");
+                    }
+                    graphPanel.saveToPNG(file.getAbsolutePath());
                     JOptionPane.showMessageDialog(this, "Wizualizacja została pomyślnie zapisana do pliku PNG!");
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(this, "Błąd generowania obrazu: " + ex.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
@@ -100,6 +113,8 @@ public class Main extends JFrame {
         fileMenu.addSeparator();
         fileMenu.add(loadCoordsItem);
         fileMenu.add(loadCoordsBinItem);
+        fileMenu.addSeparator();
+        fileMenu.add(clearGraphItem);
         fileMenu.addSeparator();
         fileMenu.add(saveImageItem);
         fileMenu.addSeparator();
@@ -116,13 +131,23 @@ public class Main extends JFrame {
         controlPanel.setLayout(new GridLayout(10, 1, 5, 5));
 
         controlPanel.add(new JLabel("Zoom (Skala):"));
-        JSlider zoomSlider = new JSlider(10, 500, 150);
+        zoomSlider = new JSlider(10, 500, 150);
         zoomSlider.addChangeListener(e -> graphPanel.setScale(zoomSlider.getValue()));
         controlPanel.add(zoomSlider);
 
         JCheckBox showNodes = new JCheckBox("Pokaż pomocnicze współrzędne", true);
         showNodes.addActionListener(e -> graphPanel.setShowLabels(showNodes.isSelected()));
         controlPanel.add(showNodes);
+
+        // Przycisk "Wyczyść płótno" w panelu bocznym
+        JButton clearButton = new JButton("Wyczyść płótno");
+        clearButton.addActionListener(e -> {
+            graph = new Graph();
+            graphPanel.setGraph(graph);
+            zoomSlider.setValue(150);
+            graphPanel.repaint();
+        });
+        controlPanel.add(clearButton);
 
         add(controlPanel, BorderLayout.EAST);
     }
