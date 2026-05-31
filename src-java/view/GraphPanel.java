@@ -21,7 +21,6 @@ public class GraphPanel extends JPanel {
     private int offsetX = 0;
     private int offsetY = 0;
 
-    // Zmienne do zapamiętywania pozycji myszy przy przesuwaniu tła
     private int lastMouseX;
     private int lastMouseY;
 
@@ -33,7 +32,6 @@ public class GraphPanel extends JPanel {
             public void mousePressed(MouseEvent e) {
                 if (graph == null) return;
 
-                // Zapisujemy pozycję startową kliknięcia
                 lastMouseX = e.getX();
                 lastMouseY = e.getY();
 
@@ -44,7 +42,7 @@ public class GraphPanel extends JPanel {
                     double distance = Math.hypot(e.getX() - screenX, e.getY() - screenY);
                     if (distance <= NODE_RADIUS) {
                         draggedNode = node;
-                        return; // Znaleźliśmy wierzchołek, przerywamy szukanie
+                        return;
                     }
                 }
             }
@@ -52,11 +50,9 @@ public class GraphPanel extends JPanel {
             @Override
             public void mouseDragged(MouseEvent e) {
                 if (draggedNode != null) {
-                    // 1. Ciągniemy wierzchołek
                     draggedNode.x = (e.getX() - offsetX) / scale;
                     draggedNode.y = (e.getY() - offsetY) / scale;
                 } else {
-                    // 2. Kliknęliśmy w puste tło - przesuwamy całą mapę
                     offsetX += e.getX() - lastMouseX;
                     offsetY += e.getY() - lastMouseY;
                     lastMouseX = e.getX();
@@ -72,11 +68,10 @@ public class GraphPanel extends JPanel {
 
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
-                // Obsługa Zoomu (kółko myszy)
                 if (e.getWheelRotation() < 0) {
-                    scale *= 1.1; // Przybliżanie
+                    scale *= 1.1;
                 } else {
-                    scale /= 1.1; // Oddalanie
+                    scale /= 1.1;
                 }
                 repaint();
             }
@@ -84,12 +79,10 @@ public class GraphPanel extends JPanel {
 
         addMouseListener(mouseHandler);
         addMouseMotionListener(mouseHandler);
-        addMouseWheelListener(mouseHandler); // Podpięcie rolki myszy
+        addMouseWheelListener(mouseHandler);
     }
 
-    // --- KULOODPORNA METODA DOPASOWUJĄCA GRAF DO OKNA ---
     public void fitToScreen() {
-        // Zabezpieczenia, jeśli nie ma grafu lub okno jeszcze się nie zbudowało
         if (graph == null || graph.getNodes().isEmpty() || getWidth() == 0) return;
 
         double minX = Double.MAX_VALUE;
@@ -97,7 +90,6 @@ public class GraphPanel extends JPanel {
         double minY = Double.MAX_VALUE;
         double maxY = -Double.MAX_VALUE;
 
-        // Szukamy skrajnych współrzędnych ze wszystkich węzłów
         for (Node n : graph.getNodes()) {
             if (n.x < minX) minX = n.x;
             if (n.x > maxX) maxX = n.x;
@@ -108,18 +100,15 @@ public class GraphPanel extends JPanel {
         double graphWidth = maxX - minX;
         double graphHeight = maxY - minY;
 
-        // Zabezpieczenie przed dzieleniem przez 0
         if (graphWidth == 0) graphWidth = 1;
         if (graphHeight == 0) graphHeight = 1;
 
-        int padding = 50; // Zostawiamy 50 pikseli wolnego tła od krawędzi
+        int padding = 50;
         double availWidth = getWidth() - 2 * padding;
         double availHeight = getHeight() - 2 * padding;
 
-        // Wyliczamy skalę z proporcji (wybieramy mniejszą, żeby nic nie ucięło)
         scale = Math.min(availWidth / graphWidth, availHeight / graphHeight);
 
-        // Centrujemy układ
         offsetX = (int) ((getWidth() - (graphWidth * scale)) / 2 - (minX * scale));
         offsetY = (int) ((getHeight() - (graphHeight * scale)) / 2 - (minY * scale));
 
@@ -145,7 +134,6 @@ public class GraphPanel extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // 1. Rysowanie KRAWĘDZI
         g2d.setColor(Color.GRAY);
         g2d.setStroke(new BasicStroke(2));
         for (Edge edge : graph.getEdges()) {
@@ -161,7 +149,6 @@ public class GraphPanel extends JPanel {
             }
         }
 
-        // 2. Rysowanie WIERZCHOŁKÓW
         int diameter = NODE_RADIUS * 2;
         for (Node node : graph.getNodes()) {
             int nx = (int) (node.x * scale) + offsetX;
@@ -174,7 +161,6 @@ public class GraphPanel extends JPanel {
             g2d.setStroke(new BasicStroke(1));
             g2d.drawOval(nx - NODE_RADIUS, ny - NODE_RADIUS, diameter, diameter);
 
-            // 3. Rysowanie ETYKIET
             if (showLabels) {
                 g2d.setColor(Color.BLACK);
                 g2d.drawString(String.valueOf(node.id), nx - NODE_RADIUS, ny - NODE_RADIUS - 5);
