@@ -4,11 +4,7 @@ import model.Graph;
 import model.Edge;
 import model.Node;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.PrintWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 public class GraphLoader {
 
@@ -49,6 +45,18 @@ public class GraphLoader {
 
                     graph.updateNodePos(id, x, y);
                 }
+            }
+        }
+    }
+
+    public void loadCoordinatesBinary(String path, Graph graph) throws IOException {
+        try (DataInputStream dis = new DataInputStream(new FileInputStream(path))) {
+            while (dis.available() >= 20) {
+                int id = dis.readInt();
+                double x = dis.readDouble();
+                double y = dis.readDouble();
+
+                graph.updateNodePos(id, x, y);
             }
         }
     }
