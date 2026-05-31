@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import model.Graph;
 import model.Node;
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -38,14 +40,22 @@ class GraphLoaderTest {
 
         Path binCoords = Files.createTempFile("coords", ".bin");
 
+        ByteBuffer bb = ByteBuffer.allocate(20);
+        bb.order(ByteOrder.LITTLE_ENDIAN);
+        bb.putInt(4);
+        bb.putDouble(12.5);
+        bb.putDouble(-25.0);
 
         try (FileOutputStream fos = new FileOutputStream(binCoords.toFile())) {
+            fos.write(bb.array());
         }
 
         loader.loadCoordinatesBinary(binCoords.toAbsolutePath().toString(), graph);
 
         assertNotNull(graph.findNode(4));
         assertEquals(12.5, graph.findNode(4).x, 0.000001);
+        assertEquals(-25.0, graph.findNode(4).y, 0.000001);
+
         Files.deleteIfExists(txtEdges);
         Files.deleteIfExists(txtCoords);
         Files.deleteIfExists(binCoords);
