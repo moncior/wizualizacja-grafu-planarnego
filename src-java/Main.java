@@ -1,8 +1,6 @@
-package view;
-
 import model.Graph;
 import io.GraphLoader;
-
+import view.GraphPanel;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -12,7 +10,6 @@ public class Main extends JFrame {
     private GraphPanel graphPanel;
     private Graph graph;
     private GraphLoader graphLoader;
-    private JSlider zoomSlider;
 
     public Main() {
         setTitle("Wizualizacja Grafów - JIMP2");
@@ -48,7 +45,7 @@ public class Main extends JFrame {
             if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 try {
                     graphLoader.loadEdges(fc.getSelectedFile().getAbsolutePath(), graph);
-                    graphPanel.repaint();
+                    graphPanel.resetView();
                     JOptionPane.showMessageDialog(this, "Struktura grafu wczytana.");
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(this, "Błąd: " + ex.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
@@ -61,7 +58,7 @@ public class Main extends JFrame {
             if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 try {
                     graphLoader.loadCoordinates(fc.getSelectedFile().getAbsolutePath(), graph);
-                    graphPanel.repaint();
+                    graphPanel.resetView();
                     JOptionPane.showMessageDialog(this, "Współrzędne zaktualizowane z pliku tekstowego.");
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(this, "Błąd: " + ex.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
@@ -74,7 +71,7 @@ public class Main extends JFrame {
             if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 try {
                     graphLoader.loadCoordinatesBinary(fc.getSelectedFile().getAbsolutePath(), graph);
-                    graphPanel.repaint();
+                    graphPanel.resetView();
                     JOptionPane.showMessageDialog(this, "Współrzędne zaktualizowane z pliku binarnego (BIN).");
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(this, "Błąd BIN: " + ex.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
@@ -82,12 +79,10 @@ public class Main extends JFrame {
             }
         });
 
-        // Opcja czyszczenia grafu w Menu
         clearGraphItem.addActionListener(e -> {
             graph = new Graph();
             graphPanel.setGraph(graph);
-            if (zoomSlider != null) zoomSlider.setValue(150);
-            graphPanel.repaint();
+            graphPanel.resetView();
         });
 
         saveImageItem.addActionListener(e -> {
@@ -130,22 +125,19 @@ public class Main extends JFrame {
         controlPanel.setBorder(BorderFactory.createTitledBorder("Panel Narzędziowy"));
         controlPanel.setLayout(new GridLayout(10, 1, 5, 5));
 
-        controlPanel.add(new JLabel("Zoom (Skala):"));
-        zoomSlider = new JSlider(10, 500, 150);
-        zoomSlider.addChangeListener(e -> graphPanel.setScale(zoomSlider.getValue()));
-        controlPanel.add(zoomSlider);
-
         JCheckBox showNodes = new JCheckBox("Pokaż pomocnicze współrzędne", true);
         showNodes.addActionListener(e -> graphPanel.setShowLabels(showNodes.isSelected()));
         controlPanel.add(showNodes);
 
-        // Przycisk "Wyczyść płótno" w panelu bocznym
+        JButton centerButton = new JButton("Resetuj widok (Centruj)");
+        centerButton.addActionListener(e -> graphPanel.resetView());
+        controlPanel.add(centerButton);
+
         JButton clearButton = new JButton("Wyczyść płótno");
         clearButton.addActionListener(e -> {
             graph = new Graph();
             graphPanel.setGraph(graph);
-            zoomSlider.setValue(150);
-            graphPanel.repaint();
+            graphPanel.resetView();
         });
         controlPanel.add(clearButton);
 
