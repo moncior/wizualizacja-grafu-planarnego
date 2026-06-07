@@ -1,29 +1,28 @@
-import view.GraphPanel;
 import model.Graph;
 import io.GraphLoader;
-
+import view.GraphPanel;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 
 public class Main extends JFrame {
-
     private GraphPanel graphPanel;
-    private Graph currentGraph;
-    private GraphLoader loader;
+    private Graph graph;
+    private GraphLoader graphLoader;
 
     public Main() {
-        currentGraph = new Graph();
-        loader = new GraphLoader();
-
-        setTitle("Wizualizacja Grafów");
-        setSize(1000, 700);
+        setTitle("Wizualizacja Grafów - JIMP2");
+        setSize(1300, 900);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
+        graph = new Graph();
+        graphLoader = new GraphLoader();
+
         graphPanel = new GraphPanel();
-        graphPanel.setGraph(currentGraph);
+        graphPanel.setGraph(graph);
         add(graphPanel, BorderLayout.CENTER);
 
         setupMenuBar();
@@ -32,72 +31,122 @@ public class Main extends JFrame {
 
     private void setupMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-        JMenu menuFile = new JMenu("Plik");
+        JMenu fileMenu = new JMenu("Plik");
 
-        JMenuItem itemLoadEdges = new JMenuItem("Wczytaj krawędzie (TXT)...");
-        itemLoadEdges.addActionListener(e -> loadFile(true));
+        JMenuItem loadEdgesItem = new JMenuItem("1. Wczytaj strukturę (data.txt)");
+        JMenuItem loadCoordsItem = new JMenuItem("2a. Wczytaj pozycje (results.txt)");
+        JMenuItem loadCoordsBinItem = new JMenuItem("2b. Wczytaj pozycje binarne (results.bin)");
+        JMenuItem clearGraphItem = new JMenuItem("Wyczyść graf (Nowy)");
+        JMenuItem saveImageItem = new JMenuItem("3. Eksportuj jako obraz (PNG)");
+        JMenuItem exitItem = new JMenuItem("Wyjście");
 
-        JMenuItem itemLoadCoords = new JMenuItem("Wczytaj współrzędne (TXT)...");
-        itemLoadCoords.addActionListener(e -> loadFile(false));
+        loadEdgesItem.addActionListener(e -> {
+            JFileChooser fc = new JFileChooser(".");
+            if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                try {
+                    graphLoader.loadEdges(fc.getSelectedFile().getAbsolutePath(), graph);
+                    graphPanel.resetView();
+                    JOptionPane.showMessageDialog(this, "Struktura grafu wczytana.");
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(this, "Błąd: " + ex.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
 
-        JMenuItem itemExit = new JMenuItem("Zakończ");
-        itemExit.addActionListener(e -> System.exit(0));
+        loadCoordsItem.addActionListener(e -> {
+            JFileChooser fc = new JFileChooser(".");
+            if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                try {
+                    graphLoader.loadCoordinates(fc.getSelectedFile().getAbsolutePath(), graph);
+                    graphPanel.resetView();
+                    JOptionPane.showMessageDialog(this, "Współrzędne zaktualizowane z pliku tekstowego.");
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(this, "Błąd: " + ex.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
 
-        menuFile.add(itemLoadEdges);
-        menuFile.add(itemLoadCoords);
-        menuFile.addSeparator();
-        menuFile.add(itemExit);
+        loadCoordsBinItem.addActionListener(e -> {
+            JFileChooser fc = new JFileChooser(".");
+            if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                try {
+                    graphLoader.loadCoordinatesBinary(fc.getSelectedFile().getAbsolutePath(), graph);
+                    graphPanel.resetView();
+                    JOptionPane.showMessageDialog(this, "Współrzędne zaktualizowane z pliku binarnego (BIN).");
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(this, "Błąd BIN: " + ex.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
 
-        menuBar.add(menuFile);
+        clearGraphItem.addActionListener(e -> {
+            graph = new Graph();
+            graphPanel.setGraph(graph);
+            graphPanel.resetView();
+        });
+
+        saveImageItem.addActionListener(e -> {
+            JFileChooser fc = new JFileChooser(".");
+            fc.setSelectedFile(new File("graf.png"));
+            if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+                try {
+                    File file = fc.getSelectedFile();
+                    if (!file.getName().toLowerCase().endsWith(".png")) {
+                        file = new File(file.getAbsolutePath() + ".png");
+                    }
+                    graphPanel.saveToPNG(file.getAbsolutePath());
+                    JOptionPane.showMessageDialog(this, "Wizualizacja została pomyślnie zapisana do pliku PNG!");
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(this, "Błąd generowania obrazu: " + ex.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        exitItem.addActionListener(e -> System.exit(0));
+
+        fileMenu.add(loadEdgesItem);
+        fileMenu.addSeparator();
+        fileMenu.add(loadCoordsItem);
+        fileMenu.add(loadCoordsBinItem);
+        fileMenu.addSeparator();
+        fileMenu.add(clearGraphItem);
+        fileMenu.addSeparator();
+        fileMenu.add(saveImageItem);
+        fileMenu.addSeparator();
+        fileMenu.add(exitItem);
+
+        menuBar.add(fileMenu);
         setJMenuBar(menuBar);
     }
 
-    private void loadFile(boolean isEdges) {
-        JFileChooser fileChooser = new JFileChooser();
-        int response = fileChooser.showOpenDialog(this);
-
-        if (response == JFileChooser.APPROVE_OPTION) {
-            File file = fileChooser.getSelectedFile();
-            try {
-                if (isEdges) {
-                    loader.loadEdges(file.getAbsolutePath(), currentGraph);
-                    JOptionPane.showMessageDialog(this, "Struktura krawędzi została poprawnie wczytana.");
-                } else {
-                    loader.loadCoordinates(file.getAbsolutePath(), currentGraph);
-                    JOptionPane.showMessageDialog(this, "Współrzędne węzłów zostały zaktualizowane.");
-                }
-                graphPanel.repaint();
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this,
-                        "Wystąpił błąd podczas wczytywania: \n" + ex.getMessage(),
-                        "Błąd odczytu", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
-
     private void setupToolBar() {
-        JPanel toolBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        toolBar.setBackground(new Color(230, 230, 230));
+        JPanel controlPanel = new JPanel();
+        controlPanel.setPreferredSize(new Dimension(250, 900));
+        controlPanel.setBorder(BorderFactory.createTitledBorder("Panel Narzędziowy"));
+        controlPanel.setLayout(new GridLayout(10, 1, 5, 5));
 
-        JCheckBox labelsCheckBox = new JCheckBox("Pokaż etykiety", true);
-        labelsCheckBox.setBackground(toolBar.getBackground());
-        labelsCheckBox.addActionListener(e -> graphPanel.setShowLabels(labelsCheckBox.isSelected()));
+        JCheckBox showNodes = new JCheckBox("Pokaż pomocnicze współrzędne", true);
+        showNodes.addActionListener(e -> graphPanel.setShowLabels(showNodes.isSelected()));
+        controlPanel.add(showNodes);
 
-        JButton resetButton = new JButton("Resetuj pozycje");
-        resetButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Wczytaj ponownie plik współrzędnych, aby zresetować układ.");
+        JButton centerButton = new JButton("Resetuj widok (Centruj)");
+        centerButton.addActionListener(e -> graphPanel.resetView());
+        controlPanel.add(centerButton);
+
+        JButton clearButton = new JButton("Wyczyść płótno");
+        clearButton.addActionListener(e -> {
+            graph = new Graph();
+            graphPanel.setGraph(graph);
+            graphPanel.resetView();
         });
+        controlPanel.add(clearButton);
 
-        toolBar.add(labelsCheckBox);
-        toolBar.add(resetButton);
-
-        add(toolBar, BorderLayout.NORTH);
+        add(controlPanel, BorderLayout.EAST);
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            Main window = new Main();
-            window.setVisible(true);
+            new Main().setVisible(true);
         });
     }
 }
